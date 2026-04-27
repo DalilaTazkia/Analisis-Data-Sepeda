@@ -66,40 +66,68 @@ st.markdown("""
 
 
 # ─── Load & Preprocess Data ───────────────────────────────────────────────────
+import os
+
 @st.cache_data
 def load_data():
-    df_day  = pd.read_csv("day_clean.csv")
-    df_hour = pd.read_csv("hour_clean.csv")
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    
+    df_day  = pd.read_csv(os.path.join(BASE_DIR, "day_clean.csv"))
+    df_hour = pd.read_csv(os.path.join(BASE_DIR, "hour_clean.csv"))
 
-    def enrich(df):
-        df = df.copy()
-        df["dteday"]        = pd.to_datetime(df["dteday"])
-        df["season_label"]  = df["season"].map(
+    # Pastikan tipe datetime
+    df_day["dteday"]  = pd.to_datetime(df_day["dteday"])
+    df_hour["dteday"] = pd.to_datetime(df_hour["dteday"])
+
+    # Tambah kolom label jika belum ada
+    if "season_label" not in df_day.columns:
+        df_day["season_label"] = df_day["season"].map(
             {1:"Spring", 2:"Summer", 3:"Fall", 4:"Winter"})
-        df["weather_label"] = df["weathersit"].map(
-            {1:"Cerah/Berawan Tipis", 2:"Berkabut/Berawan",
-             3:"Hujan/Salju Ringan",  4:"Hujan Lebat/Es"})
-        df["year_label"]    = df["yr"].map({0:"2011", 1:"2012"})
-        df["day_type"]      = df.apply(
+    if "weather_label" not in df_day.columns:
+        df_day["weather_label"] = df_day["weathersit"].map({
+            1:"Cerah/Berawan Tipis", 2:"Berkabut/Berawan",
+            3:"Hujan/Salju Ringan",  4:"Hujan Lebat/Es"})
+    if "year_label" not in df_day.columns:
+        df_day["year_label"] = df_day["yr"].map({0:"2011", 1:"2012"})
+    if "day_type" not in df_day.columns:
+        df_day["day_type"] = df_day.apply(
             lambda r: "Hari Libur/Akhir Pekan"
                       if (r["holiday"] == 1 or r["workingday"] == 0)
                       else "Hari Kerja", axis=1)
-        df["temp_c"]    = df["temp"]      * 41
-        df["atemp_c"]   = df["atemp"]     * 50
-        df["hum_pct"]   = df["hum"]       * 100
-        df["wind_kph"]  = df["windspeed"] * 67
-        return df
+    if "temp_c" not in df_day.columns:
+        df_day["temp_c"]   = df_day["temp"]      * 41
+        df_day["atemp_c"]  = df_day["atemp"]     * 50
+        df_day["hum_pct"]  = df_day["hum"]       * 100
+        df_day["wind_kph"] = df_day["windspeed"] * 67
 
-    df_day  = enrich(df_day)
-    df_hour = enrich(df_hour)
+    # Lakukan hal yang sama untuk df_hour
+    if "season_label" not in df_hour.columns:
+        df_hour["season_label"] = df_hour["season"].map(
+            {1:"Spring", 2:"Summer", 3:"Fall", 4:"Winter"})
+    if "weather_label" not in df_hour.columns:
+        df_hour["weather_label"] = df_hour["weathersit"].map({
+            1:"Cerah/Berawan Tipis", 2:"Berkabut/Berawan",
+            3:"Hujan/Salju Ringan",  4:"Hujan Lebat/Es"})
+    if "year_label" not in df_hour.columns:
+        df_hour["year_label"] = df_hour["yr"].map({0:"2011", 1:"2012"})
+    if "day_type" not in df_hour.columns:
+        df_hour["day_type"] = df_hour.apply(
+            lambda r: "Hari Libur/Akhir Pekan"
+                      if (r["holiday"] == 1 or r["workingday"] == 0)
+                      else "Hari Kerja", axis=1)
+    if "temp_c" not in df_hour.columns:
+        df_hour["temp_c"]   = df_hour["temp"]      * 41
+        df_hour["atemp_c"]  = df_hour["atemp"]     * 50
+        df_hour["hum_pct"]  = df_hour["hum"]       * 100
+        df_hour["wind_kph"] = df_hour["windspeed"] * 67
 
-    # Clustering manual
-    bins   = [0, 1500, 3000, 4500, 6000, 9000]
-    labels = ["Sangat Rendah","Rendah","Sedang","Tinggi","Sangat Tinggi"]
-    df_day["demand_cluster"] = pd.cut(df_day["cnt"], bins=bins, labels=labels)
+    # Clustering
+    if "demand_cluster" not in df_day.columns:
+        bins   = [0, 1500, 3000, 4500, 6000, 9000]
+        labels = ["Sangat Rendah","Rendah","Sedang","Tinggi","Sangat Tinggi"]
+        df_day["demand_cluster"] = pd.cut(df_day["cnt"], bins=bins, labels=labels)
 
     return df_day, df_hour
-
 
 df_day, df_hour = load_data()
 
