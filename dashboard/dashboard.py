@@ -318,16 +318,39 @@ with tab1:
         st.dataframe(tbl, use_container_width=True, hide_index=True)
 
     # Heatmap jam × hari dalam minggu
-    st.markdown("---")
-    st.markdown("#### Heatmap: Rata-rata Peminjaman per Jam × Hari")
-    wday_names = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"]
-    hm = fh.groupby(["weekday","hr"])["cnt"].mean().unstack()
-    hm.index = [wday_names[i] for i in hm.index]
+# Heatmap jam × hari dalam minggu
+st.markdown("---")
+st.markdown("#### 🗓️ Heatmap: Rata-rata Peminjaman per Jam × Hari")
 
+wday_names = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"]
+
+hm_raw = fh.groupby(["weekday","hr"])["cnt"].mean().unstack()
+
+# ── Isi weekday yang tidak ada di filter dengan baris NaN, lalu fillna(0) ──
+all_weekdays = list(range(7))
+for wd in all_weekdays:
+    if wd not in hm_raw.index:
+        hm_raw.loc[wd] = np.nan
+
+hm_raw = hm_raw.sort_index()
+hm_raw.index = [wday_names[i] for i in hm_raw.index]
+
+# Pastikan semua jam (0–23) tersedia sebagai kolom
+all_hours = list(range(24))
+hm = hm_raw.reindex(columns=all_hours).fillna(0)
+
+# Guard: jika semua nilai 0 / kosong, tampilkan pesan
+if hm.values.sum() == 0:
+    st.info("Tidak ada data untuk kombinasi filter yang dipilih. "
+            "Silakan ubah filter di sidebar.")
+else:
     fig2, ax2 = plt.subplots(figsize=(14, 4))
-    sns.heatmap(hm, ax=ax2, cmap="YlOrRd",
-                linewidths=0.2, linecolor="white",
-                cbar_kws={"label":"Rata-rata Peminjaman"})
+    sns.heatmap(
+        hm, ax=ax2, cmap="YlOrRd",
+        linewidths=0.2, linecolor="white",
+        vmin=0,                          # ← tambahkan vmin eksplisit
+        cbar_kws={"label": "Rata-rata Peminjaman"}
+    )
     ax2.set_xlabel("Jam", fontsize=11)
     ax2.set_ylabel("Hari", fontsize=11)
     ax2.set_title("Heatmap Peminjaman per Jam × Hari dalam Minggu",
@@ -434,10 +457,12 @@ with tab2:
     cross = (
         fd.groupby(["season_label","weather_label"])["cnt"]
         .mean().unstack().round(0).reindex(season_order)
+        .fillna(0)          # ← tambahkan ini
     )
     fig5, ax5 = plt.subplots(figsize=(10, 4))
     sns.heatmap(cross, ax=ax5, annot=True, fmt=".0f",
                 cmap="RdYlGn", linewidths=0.5,
+                vmin=0,       # ← tambahkan ini
                 cbar_kws={"label":"Rata-rata Peminjaman"})
     ax5.set_title("Rata-rata Peminjaman Harian (Musim × Cuaca)",
                   fontsize=12, fontweight="bold")
@@ -615,11 +640,17 @@ with tab4:
     with col2:
         st.markdown("#### Heatmap Korelasi Lengkap")
         corr_df = fd[corr_cols].corr()
-        fig10, ax10 = plt.subplots(figsize=(7, 5))
-        sns.heatmap(corr_df, ax=ax10, annot=True, fmt=".2f",
-                    cmap="RdYlGn", center=0, vmin=-1, vmax=1,
-                    linewidths=0.5, square=True,
-                    cbar_kws={"shrink":0.82})
+
+        # Guard: minimal butuh 2 baris data untuk hitung korelasi
+        if len(fd) < 2 or corr_df.isnull().all().all():
+            st.info("Data tidak cukup untuk menghitung korelasi.")
+        else:
+            fig10, ax10 = plt.subplots(figsize=(7, 5))
+            sns.heatmap(corr_df, ax=ax10, annot=True, fmt=".2f",
+                        cmap="RdYlGn", center=0, vmin=-1, vmax=1,
+                        linewidths=0.5, square=True,
+                        cbar_kws={"shrink":0.82})
+        corr_df = fd[corr_cols].corr()
         ax10.set_title("Heatmap Korelasi Pearson", fontsize=12, fontweight="bold")
         ax10.tick_params(axis="x", rotation=30, labelsize=9)
         ax10.tick_params(axis="y", rotation=0,  labelsize=9)
