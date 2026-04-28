@@ -10,7 +10,7 @@
 
 ## Deskripsi Proyek
 
-Proyek analisis data ini mengeksplorasi dataset Capital Bikeshare Washington D.C. (2011–2012) untuk menjawab dua pertanyaan bisnis berbasis metode SMART:
+Proyek analisis data ini mengeksplorasi Bike Sharing Dataset untuk menjawab dua pertanyaan bisnis berbasis metode SMART:
 
 1. Pola peminjaman per jam – Bagaimana pola rata-rata peminjaman per jam berdasarkan tipe hari (hari kerja vs. hari libur/akhir pekan) sepanjang 2011–2012?
 2. Pengaruh cuaca dan musim – Bagaimana pengaruh kondisi cuaca dan musim terhadap total peminjaman harian, serta kondisi mana yang paling menurunkan peminjaman?
