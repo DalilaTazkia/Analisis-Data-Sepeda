@@ -1,75 +1,116 @@
-# 🚲 Analisis Data Peminjaman Sepeda – Bike Sharing Dataset
+# Analisis Data Peminjaman Sepeda – Bike Sharing Dataset
 
-## 📋 Deskripsi Proyek
-Proyek analisis data ini mengeksplorasi dataset **Capital Bikeshare Washington D.C. (2011–2012)**
-untuk menjawab dua pertanyaan bisnis berbasis metode SMART:
-
-1. **Pola peminjaman per jam** – Hari Kerja vs. Hari Libur/Akhir Pekan
-2. **Pengaruh cuaca & musim** – terhadap total peminjaman harian
+**Nama:** Dalila Tazkia
+**Dataset:** Bike Sharing Dataset
+**Sumber:** [https://www.kaggle.com/datasets/lakshmi25npathi/bike-sharing-dataset](https://www.kaggle.com/datasets/lakshmi25npathi/bike-sharing-dataset)
 
 ---
 
-## 📁 Struktur File
+## Deskripsi Proyek
+
+Proyek analisis data ini mengeksplorasi dataset Capital Bikeshare Washington D.C. (2011–2012) untuk menjawab dua pertanyaan bisnis berbasis metode SMART:
+
+1. Pola peminjaman per jam – Bagaimana pola rata-rata peminjaman per jam berdasarkan tipe hari (hari kerja vs. hari libur/akhir pekan) sepanjang 2011–2012?
+2. Pengaruh cuaca dan musim – Bagaimana pengaruh kondisi cuaca dan musim terhadap total peminjaman harian, serta kondisi mana yang paling menurunkan peminjaman?
+
+---
+
+## Struktur Repositori
+
 ```
-.
-├── notebook_analisis_sepeda.ipynb   # Jupyter Notebook – seluruh alur analisis
-├── dashboard.py                     # Streamlit Dashboard interaktif
-├── requirements.txt                 # Dependensi Python
-├── day.csv                          # Dataset harian
-├── hour.csv                         # Dataset per jam
-└── README.md                        # Dokumentasi proyek
+Analisis-Data-Sepeda/
+│
+├── dashboard/
+│   ├── dashboard.py
+│   ├── day_clean.csv
+│   └── hour_clean.csv
+│
+├── data/
+│   ├── day.csv
+│   └── hour.csv
+│
+├── notebook_Analisis_Data_DalilaTazkia.ipynb
+├── requirements.txt
+└── README.md
 ```
 
 ---
 
-## 🚀 Cara Menjalankan
+## Cara Menjalankan
 
-### 1. Instalasi Dependensi
+### 1. Clone Repositori
+
+```bash
+git clone https://github.com/DalilaTazkia/Analisis-Data-Sepeda.git
+cd Analisis-Data-Sepeda
+```
+
+### 2. Install Dependensi
+
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Jalankan Dashboard Streamlit
+### 3. Jalankan Dashboard
+
 ```bash
+cd dashboard
 streamlit run dashboard.py
 ```
-Pastikan file `day.csv` dan `hour.csv` berada di direktori yang sama dengan `dashboard.py`.
 
-### 3. Buka Notebook
+Pastikan file `day_clean.csv` dan `hour_clean.csv` berada di dalam folder `dashboard/`.
+
+### 4. Buka Notebook
+
 ```bash
-jupyter notebook notebook_analisis_sepeda.ipynb
+jupyter notebook notebook_Analisis_Data_DalilaTazkia.ipynb
 ```
 
 ---
 
-## 📊 Fitur Dashboard
-- **Filter Interaktif**: Tahun, Musim, Kondisi Cuaca, Tipe Hari
-- **Tab 1 – Pola Per Jam**: Line chart & heatmap jam × hari dalam minggu
-- **Tab 2 – Cuaca & Musim**: Barplot cuaca, boxplot musim, heatmap silang
-- **Tab 3 – Tren & Clustering**: Tren bulanan 2011 vs 2012, donut chart clustering permintaan
-- **Tab 4 – Korelasi**: Scatter plot suhu, heatmap korelasi, bar chart nilai korelasi
+## Fitur Dashboard
+
+Dashboard dibangun menggunakan Streamlit dan terdiri dari empat bagian utama:
+
+* Pola Per Jam: Visualisasi pola peminjaman per jam dalam bentuk line chart dan heatmap jam terhadap hari dalam minggu
+* Cuaca dan Musim: Analisis pengaruh kondisi cuaca dan musim menggunakan bar chart, boxplot, dan heatmap
+* Tren dan Clustering: Perbandingan tren bulanan tahun 2011 dan 2012, serta segmentasi permintaan
+* Korelasi: Analisis hubungan antar variabel menggunakan scatter plot dan korelasi Pearson
+
+Dashboard juga menyediakan filter interaktif berdasarkan tahun, musim, kondisi cuaca, dan tipe hari.
 
 ---
 
-## 🔑 Kesimpulan Utama
-1. **Hari kerja** → pola bimodal (puncak 08:00 & 17:00) → pola commuter
-2. **Hari libur** → pola unimodal (puncak 11:00–13:00) → aktivitas rekreasi
-3. **Cuaca cerah** → rata-rata 4.876 peminjaman/hari vs. cuaca hujan hanya 1.803 (turun >63%)
-4. **Musim Fall (Gugur)** memiliki rata-rata peminjaman tertinggi
-5. **Total 2012 tumbuh ~70% YoY** dibanding 2011
+## Kesimpulan Utama
+
+1. Hari kerja menunjukkan pola bimodal dengan puncak pada pukul 08.00 dan 17.00, yang mencerminkan pola pengguna komuter
+2. Hari libur dan akhir pekan menunjukkan pola unimodal dengan puncak pada pukul 11.00 hingga 13.00, yang cenderung bersifat rekreasi
+3. Cuaca cerah menghasilkan rata-rata sekitar 4.877 peminjaman per hari, sedangkan kondisi hujan menurunkan hingga sekitar 1.803 peminjaman per hari
+4. Musim gugur memiliki rata-rata peminjaman tertinggi dibandingkan musim lainnya
+5. Terjadi peningkatan total peminjaman sekitar 70 persen pada tahun 2012 dibandingkan tahun 2011
 
 ---
 
-## 📦 Dataset
-- **Sumber**: [UCI Machine Learning Repository – Bike Sharing Dataset](https://archive.ics.uci.edu/ml/datasets/bike+sharing+dataset)
-- **Periode**: 1 Januari 2011 – 31 Desember 2012
-- **day.csv**: 731 baris × 16 kolom (agregasi harian)
-- **hour.csv**: 17.379 baris × 17 kolom (data per jam)
+## Dataset
+
+Dataset yang digunakan berasal dari Kaggle dan merupakan data Capital Bikeshare Washington D.C. untuk periode 2011–2012.
+
+| File                       | Deskripsi            | Baris  | Kolom |
+| -------------------------- | -------------------- | ------ | ----- |
+| `data/day.csv`             | Data harian (raw)    | 731    | 16    |
+| `data/hour.csv`            | Data per jam (raw)   | 17.379 | 17    |
+| `dashboard/day_clean.csv`  | Data harian (clean)  | 731    | 24    |
+| `dashboard/hour_clean.csv` | Data per jam (clean) | 17.379 | 25    |
 
 ---
 
-## 🛠️ Deploy ke Streamlit Cloud
-1. Push semua file ke GitHub repository
-2. Login ke [share.streamlit.io](https://share.streamlit.io)
-3. Klik **New app** → pilih repo, branch, dan set main file: `dashboard.py`
-4. Klik **Deploy**
+## Deploy Streamlit Cloud
+
+Dashboard dapat dijalankan secara online melalui Streamlit Cloud:
+
+1. Login ke [https://share.streamlit.io](https://share.streamlit.io)
+2. Klik New app dan pilih repository DalilaTazkia/Analisis-Data-Sepeda
+3. Atur Main file path ke `dashboard/dashboard.py`
+4. Klik Deploy
+
+---
